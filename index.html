@@ -27,8 +27,8 @@
 
         #climateMap {
             display: block;
-            width: 300px;
-            height: 300px;
+             width: 300px;
+             height: 300px;
         }
 
         #temperatureOverlay {
@@ -49,6 +49,7 @@
             <img id="climateMap" src="世界_正積方位図法地図1_Crop Image.png" alt="架空世界の気候地図">
             <canvas id="temperatureOverlay"></canvas>
         </div>
+        <div id="season">季節: 春</div>
     </div>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -56,6 +57,7 @@
             const speedValue = document.getElementById('speedValue');
             const temperatureOverlay = document.getElementById('temperatureOverlay');
             const climateMap = document.getElementById('climateMap');
+            const seasonElement = document.getElementById('season');
             let speed = parseFloat(speedRange.value);
 
             const ctx = temperatureOverlay.getContext('2d');
@@ -63,25 +65,37 @@
             temperatureOverlay.height = climateMap.height;
 
             let time = 0;
+            const seasons = ["春", "夏", "秋", "冬"];
+            const seasonColors = [
+                { cold: [0, 0, 255], cool: [0, 255, 255], mild: [0, 255, 0], warm: [255, 255, 0], hot: [255, 0, 0] }, // 春
+                { cold: [0, 0, 200], cool: [0, 200, 200], mild: [0, 200, 0], warm: [200, 200, 0], hot: [200, 0, 0] }, // 夏
+                { cold: [0, 0, 180], cool: [0, 180, 180], mild: [0, 180, 0], warm: [180, 180, 0], hot: [180, 0, 0] }, // 秋
+                { cold: [0, 0, 160], cool: [0, 160, 160], mild: [0, 160, 0], warm: [160, 160, 0], hot: [160, 0, 0] }  // 冬
+            ];
 
             function updateOverlay() {
                 ctx.clearRect(0, 0, temperatureOverlay.width, temperatureOverlay.height);
+
+                const seasonIndex = Math.floor((time / 100) % 4);
+                const season = seasons[seasonIndex];
+                seasonElement.textContent = `季節: ${season}`;
+                const colors = seasonColors[seasonIndex];
 
                 for (let y = 0; y < temperatureOverlay.height; y++) {
                     for (let x = 0; x < temperatureOverlay.width; x++) {
                         const pixelValue = ((Math.sin((x + time) * 0.05) + Math.cos((y + time) * 0.05)) * 127 + 128) % 256;
                         let r, g, b;
 
-                        if (pixelValue < 20) {
-                            r = 0; g = 0; b = 25; // 寒帯
-                        } else if (pixelValue < 67) {
-                            r = 0; g = 255; b = 0; // 冷帯
-                        } else if (pixelValue < 136) {
-                            r = 255; g = 255; b = 0; // 温帯
-                        } else if (pixelValue < 200) {
-                            r = 255; g = 165; b = 0; // 亜熱帯
+                        if (pixelValue < 51) {
+                            [r, g, b] = colors.cold;
+                        } else if (pixelValue < 102) {
+                            [r, g, b] = colors.cool;
+                        } else if (pixelValue < 153) {
+                            [r, g, b] = colors.mild;
+                        } else if (pixelValue < 204) {
+                            [r, g, b] = colors.warm;
                         } else {
-                            r = 255; g = 0; b = 0; // 熱帯
+                            [r, g, b] = colors.hot;
                         }
 
                         ctx.fillStyle = `rgba(${r}, ${g}, ${b}, 0.5)`;
