@@ -73,10 +73,10 @@
             let time = 0;
             const seasons = ["春", "夏", "秋", "冬"];
             const seasonColors = [
-                { cold: [0, 0, 255,50], cool: [0, 255, 255,50], mild: [0, 255, 0,50], warm: [255, 255, 0,50], hot: [255, 0, 0,50] }, // 春
-                { cold: [0, 0, 200,50], cool: [0, 200, 200,50], mild: [0, 200, 0,50], warm: [200, 200, 0,50], hot: [200, 0, 0,50] }, // 夏
-                { cold: [0, 0, 180,50], cool: [0, 180, 180,50], mild: [0, 180, 0,50], warm: [180, 180, 0,50], hot: [180, 0, 0,50] }, // 秋
-                { cold: [0, 0, 160,50], cool: [0, 160, 160,50], mild: [0, 160, 0,50], warm: [160, 160, 0], hot: [160, 0, 0,50] }  // 冬
+                { cold: [0, 255, 255, 50], cool: [0, 255, 255, 25], mild: [255, 255, 0, 0], warm: [255, 192, 0, 50], hot: [255, 0, 0, 50] }, // 春
+                { cold: [0, 255, 255, 25], cool: [0, 255, 255, 12], mild: [255, 192, 0, 50], warm: [255, 128, 0, 0], hot: [255, 0, 0, 50] }, // 夏
+                { cold: [0, 255, 255, 25], cool: [0, 255, 255, 12], mild: [255, 192, 0, 50], warm: [255, 128, 0, 0], hot: [255, 0, 0, 50] }, // 秋
+                { cold: [0, 255, 255, 50], cool: [0, 255, 255, 25], mild: [255, 255, 0, 0], warm: [255, 192, 0, 50], hot: [255, 0, 0, 50] }  // 冬
             ];
 
             function updateOverlay() {
@@ -93,10 +93,10 @@
                         if (distanceToCenter > 150) continue;  // 円の外は描画しない
 
                         const pixelValue = (Math.random() * 256) % 256;
-                        let r, g, b;
+                        let r, g, b, a;
 
                         if (pixelValue < 51) {
-                            [r, g, b, a ] = colors.cold;
+                            [r, g, b, a] = colors.cold;
                         } else if (pixelValue < 102) {
                             [r, g, b, a] = colors.cool;
                         } else if (pixelValue < 153) {
