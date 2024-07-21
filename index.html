@@ -73,10 +73,10 @@
             let time = 0;
             const seasons = ["春", "夏", "秋", "冬"];
             const seasonColors = [
-                { cold: [0, 0, 255, 50], cool: [0, 255, 255, 50], mild: [0, 255, 0, 50], warm: [255, 255, 0, 50], hot: [255, 0, 0, 50] }, // 春
-                { cold: [0, 0, 200, 50], cool: [0, 200, 200, 50], mild: [0, 200, 0, 50], warm: [200, 200, 0, 50], hot: [200, 0, 0, 50] }, // 夏
-                { cold: [0, 0, 180, 50], cool: [0, 180, 180, 50], mild: [0, 180, 0, 50], warm: [180, 180, 0, 50], hot: [180, 0, 0, 50] }, // 秋
-                { cold: [0, 0, 160, 50], cool: [0, 160, 160, 50], mild: [0, 160, 0, 50], warm: [160, 160, 0, 50], hot: [160, 0, 0, 50] }  // 冬
+                { supercold: [0, 0, 255, 50], cold: [0, 128, 255, 50], coldmild: [0, 255, 255, 50], mild: [0, 255, 128, 50], mildwarm: [0, 255, 0, 50], warm: [128, 255, 0, 50], hot: [255, 255, 0, 50], superhot: [255, 128, 0, 50], extremehot: [255, 0, 0, 50] }, // 春
+                { supercold: [0, 0, 200, 50], cold: [0, 128, 200, 50], coldmild: [0, 200, 200, 50], mild: [0, 200, 128, 50], mildwarm: [0, 200, 0, 50], warm: [128, 200, 0, 50], hot: [200, 200, 0, 50], superhot: [200, 128, 0, 50], extremehot: [200, 0, 0, 50] }, // 夏
+                { supercold: [0, 0, 180, 50], cold: [0, 128, 180, 50], coldmild: [0, 180, 180, 50], mild: [0, 180, 128, 50], mildwarm: [0, 180, 0, 50], warm: [128, 180, 0, 50], hot: [180, 180, 0, 50], superhot: [180, 128, 0, 50], extremehot: [180, 0, 0, 50] }, // 秋
+                { supercold: [0, 0, 160, 50], cold: [0, 128, 160, 50], coldmild: [0, 160, 160, 50], mild: [0, 160, 128, 50], mildwarm: [0, 160, 0, 50], warm: [128, 160, 0, 50], hot: [160, 160, 0, 50], superhot: [160, 128, 0, 50], extremehot: [160, 0, 0, 50] }  // 冬
             ];
 
             function updateOverlay() {
@@ -93,26 +93,34 @@
                         if (distanceToCenter > 150) continue;  // 円の外は描画しない
 
                         let r, g, b, a;
-                        if (distanceToCenter < 50 || distanceToCenter > 120) {
-                            [r, g, b, a] = colors.cold; // 中心と縁を寒い色に
+                        if (distanceToCenter < 50 || distanceToCenter > 140) {
+                            [r, g, b, a] = colors.supercold; // 中心と縁を「めちゃくちゃ寒い」色に
+                        } else if (distanceToCenter > 60 && distanceToCenter < 90) {
+                            [r, g, b, a] = colors.extremehot; // 赤道付近を「暑い」色に
                         } else {
                             const angle = Math.atan2(y - 150, x - 150) + time / 50; // ぐにゃぐにゃ効果
                             const radius = distanceToCenter + Math.sin(angle * 5) * 5; // ぐにゃぐにゃ効果
                             const pixelValue = Math.floor((radius / 150) * 255);
-                            if (pixelValue < 51) {
+                            if (pixelValue < 32) {
+                                [r, g, b, a] = colors.supercold;
+                            } else if (pixelValue < 64) {
                                 [r, g, b, a] = colors.cold;
-                            } else if (pixelValue < 102) {
-                                [r, g, b, a] = colors.cool;
-                            } else if (pixelValue < 153) {
+                            } else if (pixelValue < 96) {
+                                [r, g, b, a] = colors.coldmild;
+                            } else if (pixelValue < 128) {
                                 [r, g, b, a] = colors.mild;
-                            } else if (pixelValue < 204) {
+                            } else if (pixelValue < 160) {
+                                [r, g, b, a] = colors.mildwarm;
+                            } else if (pixelValue < 192) {
                                 [r, g, b, a] = colors.warm;
-                            } else {
+                            } else if (pixelValue < 224) {
                                 [r, g, b, a] = colors.hot;
+                            } else {
+                                [r, g, b, a] = colors.superhot;
                             }
                         }
 
-                        ctx.fillStyle = `rgba(${r}, ${g}, ${b}, 0.5)`;
+                        ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${a/100})`;
                         ctx.fillRect(x, y, 1, 1);
                     }
                 }
