@@ -1,0 +1,26 @@
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-color: #f0f0f0;
+}
+
+.container {
+    text-align: center;
+}
+
+#worldMap {
+    width: 325px; /* 必要に応じてサイズを調整 */
+    height: auto;
+    opacity: 0.36; /* 初期値の透明度 */
+    transition: opacity 0.3s ease;
+}
+
+input[type="range"] {
+    width: 100%;
+    max-width: 300px;
+    margin: 20px 0;
+}
