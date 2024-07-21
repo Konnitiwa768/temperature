@@ -27,8 +27,8 @@
 
         #climateMap {
             display: block;
-            width: 32px;
-            height: 32px;
+            width: 300px;
+            height: 300px;
         }
 
         #temperatureOverlay {
@@ -72,13 +72,13 @@
                         const pixelValue = ((Math.sin((x + time) * 0.05) + Math.cos((y + time) * 0.05)) * 127 + 128) % 256;
                         let r, g, b;
 
-                        if (pixelValue < 1) {
-                            r = 0; g = 0; b = 255; // 寒帯
-                        } else if (pixelValue < 6) {
+                        if (pixelValue < 20) {
+                            r = 0; g = 0; b = 25; // 寒帯
+                        } else if (pixelValue < 67) {
                             r = 0; g = 255; b = 0; // 冷帯
-                        } else if (pixelValue < 14) {
+                        } else if (pixelValue < 136) {
                             r = 255; g = 255; b = 0; // 温帯
-                        } else if (pixelValue < 30) {
+                        } else if (pixelValue < 200) {
                             r = 255; g = 165; b = 0; // 亜熱帯
                         } else {
                             r = 255; g = 0; b = 0; // 熱帯
