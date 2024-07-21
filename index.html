@@ -4,14 +4,71 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>架空世界天気観測ツール</title>
-    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+
+        .container {
+            text-align: center;
+        }
+
+        #climateMap {
+            width: 300px; /* 必要に応じてサイズを調整 */
+            height: auto;
+            border: 1px solid #ccc;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            max-width: 300px;
+            margin: 20px 0;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
-        <input type="range" id="speedRange" min="-45" max="45" value="0">
-        <div id="speedValue">速度: 0</div>
-        <img id="worldMap" src="世界_正積方位図法地図1_Crop Image.png" alt="架空世界の地図">
+        <input type="range" id="temperatureRange" min="-10" max="10" value="0">
+        <div id="temperatureValue">温度変化: 0°C</div>
+        <img id="climateMap" src="climate_map.png" alt="架空世界の気候地図">
+        <div id="climateInfo"></div>
     </div>
-    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const temperatureRange = document.getElementById('temperatureRange');
+            const temperatureValue = document.getElementById('temperatureValue');
+            const climateInfo = document.getElementById('climateInfo');
+
+            const baseTemperatures = {
+                "寒帯": -20,
+                "冷帯": 0,
+                "温帯": 15,
+                "亜熱帯": 25,
+                "熱帯": 30
+            };
+
+            temperatureRange.addEventListener('input', () => {
+                const temperatureChange = parseInt(temperatureRange.value);
+                temperatureValue.textContent = `温度変化: ${temperatureChange}°C`;
+                
+                const climates = Object.keys(baseTemperatures);
+                climateInfo.innerHTML = '';
+
+                climates.forEach(climate => {
+                    const baseTemp = baseTemperatures[climate];
+                    const currentTemp = baseTemp + temperatureChange;
+                    const climateElement = document.createElement('div');
+                    climateElement.textContent = `${climate}: ${currentTemp}°C`;
+                    climateInfo.appendChild(climateElement);
+                });
+            });
+        });
+    </script>
 </body>
 </html>
