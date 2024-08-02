@@ -3,141 +3,104 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>架空世界天気観測ツール</title>
+    <title>漢字間違い探しゲーム</title>
     <style>
         body {
+            background-color: black;
+            color: white;
             font-family: Arial, sans-serif;
-            display: flex;
-            flex-direction: column;
+            text-align: center;
+        }
+        .kanji-button {
+            background-color: red;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 2px;
+            font-size: 24px;
+            cursor: pointer;
+            width: 50px;
+            height: 50px;
+        }
+        .level-container {
+            margin: 20px 0;
+        }
+        .hidden {
+            display: none;
+        }
+        .kanji-grid {
+            display: grid;
+            grid-template-columns: repeat(20, 50px);
+            grid-gap: 2px;
             justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            background-color: #f0f0f0;
-        }
-
-        .container {
-            text-align: center;
-        }
-
-        .climateMap {
-            text-align: center;
-            width: 300px;
-            height: 300px;
-        }
-
-        #climateMapContainer {
-            position: relative;
-            display: inline-block;
-            width: 300px;
-            height: 300px;
-            border-radius: 50%;
-            overflow: hidden;
-        }
-
-        #temperatureOverlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            opacity: 0.5;
-            border-radius: 50%;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <input type="range" id="speedRange" min="0.5" max="2" step="0.002" value="1">
-        <div id="speedValue">速度: 1日/秒</div>
-        <div id="climateMapContainer">
-            <img id="climateMap" src="世界.png" alt="架空世界の気候地図" class="climateMap">
-            <canvas id="temperatureOverlay"></canvas>
-        </div>
-        <div id="season">季節: 春</div>
+    <h1>漢字間違い探しゲーム</h1>
+    <div class="level-container">
+        <button class="kanji-button" onclick="startGame('easy')">初級</button>
+        <button class="kanji-button" onclick="startGame('medium')">中級</button>
+        <button class="kanji-button" onclick="startGame('hard')">上級</button>
     </div>
+    <div id="game-container" class="hidden">
+        <h2 id="level-title"></h2>
+        <div id="kanji-grid" class="kanji-grid"></div>
+        <button class="kanji-button" onclick="checkAnswer()">答え合わせ</button>
+    </div>
+
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const speedRange = document.getElementById('speedRange');
-            const speedValue = document.getElementById('speedValue');
-            const temperatureOverlay = document.getElementById('temperatureOverlay');
-            const seasonElement = document.getElementById('season');
-            let speed = parseFloat(speedRange.value);
+        const kanjiPairs = {
+            easy: [['一', '二'], ['日', '目']],
+            medium: [['牛', '午'], ['士', '土'], ['木', '本'], ['正', '止']],
+            hard: [['言', '訁'], ['堯', '喬'], ['橋', '檄'], ['線', '綫'], ['馬', '騅'],
+                   ['雨', '雪'], ['青', '靑'], ['湖', '海'], ['藤', '滕'], ['難', '𡨕'], ['閂', '問']]
+        };
 
-            const ctx = temperatureOverlay.getContext('2d');
-            temperatureOverlay.width = 300;
-            temperatureOverlay.height = 300;
+        let currentLevel = '';
+        let correctAnswer = '';
 
-            let time = 0;
-            const seasons = ["春", "夏", "秋", "冬"];
-            const seasonColors = [
-                { supercold: [0, 0, 255, 50], cold: [0, 128, 255, 50], coldmild: [0, 192, 255, 50], mild: [0, 255, 255, 50], mildwarm: [0, 255, 192, 50], warm: [0, 255, 128, 50], hot: [128, 255, 0, 50], superhot: [255, 255, 0, 50], extremehot: [255, 128, 0, 50], veryhot: [255, 150, 150, 50], extremeveryhot: [255, 100, 100, 50], ultraextremehot: [255, 50, 50, 50] }, // 春
-                { supercold: [0, 30, 230, 50], cold: [0, 160, 230, 50], coldmild: [0, 230, 230, 50], mild: [0, 230, 180, 50], mildwarm: [0, 230, 100, 50], warm: [100, 230, 50, 50], hot: [180, 230, 0, 50], superhot: [230, 180, 0, 50], extremehot: [230, 100, 0, 50], veryhot: [255, 200, 200, 50], extremeveryhot: [255, 150, 150, 50], ultraextremehot: [255, 100, 100, 50] }, // 夏
-                { supercold: [0, 20, 200, 50], cold: [0, 140, 200, 50], coldmild: [0, 200, 200, 50], mild: [0, 200, 150, 50], mildwarm: [0, 200, 100, 50], warm: [100, 200, 50, 50], hot: [150, 200, 0, 50], superhot: [200, 150, 0, 50], extremehot: [200, 100, 0, 50], veryhot: [255, 200, 200, 50], extremeveryhot: [255, 150, 150, 50], ultraextremehot: [255, 100, 100, 50] }, // 秋
-                { supercold: [0, 0, 170, 50], cold: [0, 100, 170, 50], coldmild: [0, 170, 170, 50], mild: [0, 170, 130, 50], mildwarm: [0, 170, 80, 50], warm: [80, 170, 0, 50], hot: [130, 170, 0, 50], superhot: [170, 130, 0, 50], extremehot: [170, 80, 0, 50], veryhot: [255, 200, 200, 50], extremeveryhot: [255, 150, 150, 50], ultraextremehot: [255, 100, 100, 50] }  // 冬
-            ];
+        function startGame(level) {
+            currentLevel = level;
+            const kanjiGrid = document.getElementById('kanji-grid');
+            kanjiGrid.innerHTML = '';
+            const levelTitle = document.getElementById('level-title');
+            levelTitle.innerText = level === 'easy' ? '初級' : level === 'medium' ? '中級' : '上級';
+            document.querySelector('.level-container').classList.add('hidden');
+            document.getElementById('game-container').classList.remove('hidden');
 
-            function updateOverlay() {
-                ctx.clearRect(0, 0, temperatureOverlay.width, temperatureOverlay.height);
+            const levelPairs = kanjiPairs[level];
+            const randomPair = levelPairs[Math.floor(Math.random() * levelPairs.length)];
+            correctAnswer = randomPair[1];
+            const shuffledKanjis = Array(120).fill(randomPair[0]);
 
-                const seasonIndex = Math.floor((time / 100) % 4);
-                const season = seasons[seasonIndex];
-                seasonElement.textContent = `季節: ${season}`;
-                const colors = seasonColors[seasonIndex];
+            // ランダムな位置に間違った漢字を1つ挿入
+            const randomIndex = Math.floor(Math.random() * 120);
+            shuffledKanjis[randomIndex] = randomPair[1];
 
-                for (let y = 0; y < temperatureOverlay.height; y++) {
-                    for (let x = 0; x < temperatureOverlay.width; x++) {
-                        const distanceToCenter = Math.sqrt((x - 150) ** 2 + (y - 150) ** 2);
-                        if (distanceToCenter > 150) continue;  // 円の外は描画しない
-
-                        let r, g, b, a;
-                        if (distanceToCenter < 50 || distanceToCenter > 140) {
-                            [r, g, b, a] = colors.supercold; // 中心と縁を「めちゃくちゃ寒い」色に
-                        } else if (distanceToCenter > 60 && distanceToCenter < 90) {
-                            [r, g, b, a] = colors.extremehot; // 赤道付近を「暑い」色に
-                        } else {
-                            const angle = Math.atan2(y - 150, x - 150) + time / 50; // ぐにゃぐにゃ効果
-                            const radius = distanceToCenter + Math.sin(angle * 10) * 6 + Math.random() * 8;
-                            const pixelValue = Math.floor((radius / 150) * 255);
-                            if (pixelValue < 32) {
-                                [r, g, b, a] = colors.supercold;
-                            } else if (pixelValue < 64) {
-                                [r, g, b, a] = colors.cold;
-                            } else if (pixelValue < 96) {
-                                [r, g, b, a] = colors.coldmild;
-                            } else if (pixelValue < 128) {
-                                [r, g, b, a] = colors.mild;
-                            } else if (pixelValue < 160) {
-                                [r, g, b, a] = colors.mildwarm;
-                            } else if (pixelValue < 192) {
-                                [r, g, b, a] = colors.warm;
-                            } else if (pixelValue < 224) {
-                                [r, g, b, a] = colors.hot;
-                            } else if (pixelValue < 240) {
-                                [r, g, b, a] = colors.veryhot;
-                            } else if (pixelValue < 255) {
-                                [r, g, b, a] = colors.extremeveryhot;
-                            } else {
-                                [r, g, b, a] = colors.ultraextremehot;
-                            }
-                        }
-
-                        ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${a/100})`;
-                        ctx.fillRect(x, y, 1, 1);
-                    }
-                }
-
-                time += speed;
-                requestAnimationFrame(updateOverlay);
-            }
-
-            speedRange.addEventListener('input', () => {
-                speed = parseFloat(speedRange.value);
-                speedValue.textContent = `速度: ${speed}日/秒`;
+            shuffledKanjis.forEach(kanji => {
+                const button = document.createElement('button');
+                button.className = 'kanji-button';
+                button.innerText = kanji;
+                button.onclick = () => selectKanji(button);
+                kanjiGrid.appendChild(button);
             });
+        }
 
-            updateOverlay();
-        });
+        function selectKanji(button) {
+            const buttons = document.querySelectorAll('.kanji-button');
+            buttons.forEach(btn => btn.classList.remove('selected'));
+            button.classList.add('selected');
+        }
+
+        function checkAnswer() {
+            const selectedButton = document.querySelector('.kanji-button.selected');
+            if (selectedButton && selectedButton.innerText === correctAnswer) {
+                alert('正解です！');
+            } else {
+                alert('不正解です。もう一度試してください。');
+            }
+        }
     </script>
 </body>
 </html>
