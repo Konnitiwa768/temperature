@@ -16,15 +16,23 @@
             color: white;
             border: none;
             padding: 10px 20px;
-            margin: 5px;
+            margin: 2px;
             font-size: 24px;
             cursor: pointer;
+            width: 50px;
+            height: 50px;
         }
         .level-container {
             margin: 20px 0;
         }
         .hidden {
             display: none;
+        }
+        .kanji-grid {
+            display: grid;
+            grid-template-columns: repeat(20, 50px);
+            grid-gap: 2px;
+            justify-content: center;
         }
     </style>
 </head>
@@ -37,7 +45,7 @@
     </div>
     <div id="game-container" class="hidden">
         <h2 id="level-title"></h2>
-        <div id="kanji-grid"></div>
+        <div id="kanji-grid" class="kanji-grid"></div>
         <button class="kanji-button" onclick="checkAnswer()">答え合わせ</button>
     </div>
 
@@ -46,7 +54,7 @@
             easy: [['一', '二'], ['日', '目']],
             medium: [['牛', '午'], ['士', '土'], ['木', '本'], ['正', '止']],
             hard: [['言', '訁'], ['堯', '喬'], ['橋', '檄'], ['線', '綫'], ['馬', '騅'],
-                   ['雨', '而'], ['青', '靑'], ['間', '問'], ['問', '閂'], ['生', '壬']]
+                   ['雨', '雪'], ['青', '靑'], ['湖', '海'], ['藤', '滕'], ['難', '𡨕'], ['閂', '問']]
         };
 
         let currentLevel = '';
@@ -64,38 +72,19 @@
             const levelPairs = kanjiPairs[level];
             const randomPair = levelPairs[Math.floor(Math.random() * levelPairs.length)];
             correctAnswer = randomPair[1];
-            const shuffledKanjis = shuffleArray([...randomPair, ...getRandomKanjis(20, levelPairs)]);
+            const shuffledKanjis = Array(120).fill(randomPair[0]);
 
-            shuffledKanjis.forEach((kanji, index) => {
+            // ランダムな位置に間違った漢字を1つ挿入
+            const randomIndex = Math.floor(Math.random() * 120);
+            shuffledKanjis[randomIndex] = randomPair[1];
+
+            shuffledKanjis.forEach(kanji => {
                 const button = document.createElement('button');
                 button.className = 'kanji-button';
-                button.innerText = (index === 0) ? randomPair[0] : kanji; // 1番目を固定
+                button.innerText = kanji;
                 button.onclick = () => selectKanji(button);
                 kanjiGrid.appendChild(button);
             });
-
-            // 2番目の漢字をランダムな位置に配置
-            const randomIndex = Math.floor(Math.random() * shuffledKanjis.length);
-            kanjiGrid.children[randomIndex].innerText = correctAnswer;
-        }
-
-        function shuffleArray(array) {
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
-            }
-            return array;
-        }
-
-        function getRandomKanjis(count, excludePairs) {
-            const allKanjis = '一二三四五六七八九十日月火水木金土目田力男女子大小上下左右中正行立言士土午牛木本止喬堯橋檄線綫騅馬堯喬橋檄線綫騅馬雨雪青清湖海藤藤難難'.split('');
-            const excludeKanjis = excludePairs.flat();
-            const filteredKanjis = allKanjis.filter(kanji => !excludeKanjis.includes(kanji));
-            const randomKanjis = [];
-            for (let i = 0; i < count; i++) {
-                randomKanjis.push(filteredKanjis[Math.floor(Math.random() * filteredKanjis.length)]);
-            }
-            return randomKanjis;
         }
 
         function selectKanji(button) {
