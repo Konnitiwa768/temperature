@@ -41,8 +41,6 @@
             left: 0;
             width: 100%;
             height: 100%;
-            width: 300px;
-            height: 300px;
             opacity: 0.5;
             border-radius: 50%;
         }
@@ -73,10 +71,10 @@
             let time = 0;
             const seasons = ["春", "夏", "秋", "冬"];
             const seasonColors = [
-                { supercold: [0, 0, 255, 50], cold: [0, 128, 255, 50], coldmild: [0, 255, 255, 50], mild: [0, 255, 128, 50], mildwarm: [0, 255, 0, 50], warm: [128, 255, 0, 50], hot: [255, 255, 0, 50], superhot: [255, 128, 0, 50], extremehot: [255, 0, 0, 50], veryhot: [255, 100, 100, 50], extremeveryhot: [255, 50, 50, 50], ultraextremehot: [255, 0, 0, 50] }, // 春
-                { supercold: [0, 0, 200, 50], cold: [0, 128, 200, 50], coldmild: [0, 200, 200, 50], mild: [0, 200, 128, 50], mildwarm: [0, 200, 0, 50], warm: [128, 200, 0, 50], hot: [200, 200, 0, 50], superhot: [200, 128, 0, 50], extremehot: [200, 0, 0, 50], veryhot: [255, 100, 100, 50], extremeveryhot: [255, 50, 50, 50], ultraextremehot: [255, 0, 0, 50] }, // 夏
-                { supercold: [0, 0, 180, 50], cold: [0, 128, 180, 50], coldmild: [0, 180, 180, 50], mild: [0, 180, 128, 50], mildwarm: [0, 180, 0, 50], warm: [128, 180, 0, 50], hot: [180, 180, 0, 50], superhot: [180, 128, 0, 50], extremehot: [180, 0, 0, 50], veryhot: [255, 100, 100, 50], extremeveryhot: [255, 50, 50, 50], ultraextremehot: [255, 0, 0, 50] }, // 秋
-                { supercold: [0, 0, 160, 50], cold: [0, 128, 160, 50], coldmild: [0, 160, 160, 50], mild: [0, 160, 128, 50], mildwarm: [0, 160, 0, 50], warm: [128, 160, 0, 50], hot: [160, 160, 0, 50], superhot: [160, 128, 0, 50], extremehot: [160, 0, 0, 50], veryhot: [255, 100, 100, 50], extremeveryhot: [255, 50, 50, 50], ultraextremehot: [255, 0, 0, 50] }  // 冬
+                { supercold: [0, 0, 255, 50], cold: [0, 128, 255, 50], coldmild: [0, 192, 255, 50], mild: [0, 255, 255, 50], mildwarm: [0, 255, 192, 50], warm: [0, 255, 128, 50], hot: [128, 255, 0, 50], superhot: [255, 255, 0, 50], extremehot: [255, 128, 0, 50], veryhot: [255, 150, 150, 50], extremeveryhot: [255, 100, 100, 50], ultraextremehot: [255, 50, 50, 50] }, // 春
+                { supercold: [0, 30, 230, 50], cold: [0, 160, 230, 50], coldmild: [0, 230, 230, 50], mild: [0, 230, 180, 50], mildwarm: [0, 230, 100, 50], warm: [100, 230, 50, 50], hot: [180, 230, 0, 50], superhot: [230, 180, 0, 50], extremehot: [230, 100, 0, 50], veryhot: [255, 200, 200, 50], extremeveryhot: [255, 150, 150, 50], ultraextremehot: [255, 100, 100, 50] }, // 夏
+                { supercold: [0, 20, 200, 50], cold: [0, 140, 200, 50], coldmild: [0, 200, 200, 50], mild: [0, 200, 150, 50], mildwarm: [0, 200, 100, 50], warm: [100, 200, 50, 50], hot: [150, 200, 0, 50], superhot: [200, 150, 0, 50], extremehot: [200, 100, 0, 50], veryhot: [255, 200, 200, 50], extremeveryhot: [255, 150, 150, 50], ultraextremehot: [255, 100, 100, 50] }, // 秋
+                { supercold: [0, 0, 170, 50], cold: [0, 100, 170, 50], coldmild: [0, 170, 170, 50], mild: [0, 170, 130, 50], mildwarm: [0, 170, 80, 50], warm: [80, 170, 0, 50], hot: [130, 170, 0, 50], superhot: [170, 130, 0, 50], extremehot: [170, 80, 0, 50], veryhot: [255, 200, 200, 50], extremeveryhot: [255, 150, 150, 50], ultraextremehot: [255, 100, 100, 50] }  // 冬
             ];
 
             function updateOverlay() {
@@ -99,7 +97,7 @@
                             [r, g, b, a] = colors.extremehot; // 赤道付近を「暑い」色に
                         } else {
                             const angle = Math.atan2(y - 150, x - 150) + time / 50; // ぐにゃぐにゃ効果
-                            const radius = distanceToCenter + Math.sin(angle * 5) * 3; // ノイズを減らしたぐにゃぐにゃ効果
+                            const radius = distanceToCenter + Math.sin(angle * 10) * 10; // ノイズを強化
                             const pixelValue = Math.floor((radius / 150) * 255);
                             if (pixelValue < 32) {
                                 [r, g, b, a] = colors.supercold;
@@ -135,7 +133,7 @@
 
             speedRange.addEventListener('input', () => {
                 speed = parseFloat(speedRange.value);
-                speedValue.textContent = `速度: ${speed.toFixed(3)}日/秒`;
+                speedValue.textContent = `速度: ${speed}日/秒`;
             });
 
             updateOverlay();
