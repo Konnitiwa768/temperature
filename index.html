@@ -97,7 +97,7 @@
                             [r, g, b, a] = colors.extremehot; // 赤道付近を「暑い」色に
                         } else {
                             const angle = Math.atan2(y - 150, x - 150) + time / 50; // ぐにゃぐにゃ効果
-                            const radius = distanceToCenter + Math.sin(angle * 10) * 6 + Math.random() * 5;
+                            const radius = distanceToCenter + Math.sin(angle * 10) * 6 + Math.random() * 8;
                             const pixelValue = Math.floor((radius / 150) * 255);
                             if (pixelValue < 32) {
                                 [r, g, b, a] = colors.supercold;
