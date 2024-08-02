@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>漢字間違い探しゲーム</title>
+    <style>
+        body {
+            background-color: black;
+            color: white;
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        .kanji-button {
+            background-color: red;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
+            font-size: 24px;
+            cursor: pointer;
+        }
+        .level-container {
+            margin: 20px 0;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>漢字間違い探しゲーム</h1>
+    <div class="level-container">
+        <button class="kanji-button" onclick="startGame('easy')">初級</button>
+        <button class="kanji-button" onclick="startGame('medium')">中級</button>
+        <button class="kanji-button" onclick="startGame('hard')">上級</button>
+    </div>
+    <div id="game-container" class="hidden">
+        <h2 id="level-title"></h2>
+        <div id="kanji-grid"></div>
+        <button class="kanji-button" onclick="checkAnswer()">答え合わせ</button>
+    </div>
+
+    <script>
+        const kanjiPairs = {
+            easy: [['一', '二'], ['日', '目']],
+            medium: [['牛', '午'], ['士', '土'], ['木', '本'], ['正', '止']],
+            hard: [['言', '訁'], ['堯', '喬'], ['橋', '檄'], ['線', '綫'], ['馬', '騅'],
+                   ['雨', '而'], ['青', '靑'], ['間', '問'], ['問', '閂'], ['生', '壬']]
+        };
+
+        let currentLevel = '';
+        let correctAnswer = '';
+
+        function startGame(level) {
+            currentLevel = level;
+            const kanjiGrid = document.getElementById('kanji-grid');
+            kanjiGrid.innerHTML = '';
+            const levelTitle = document.getElementById('level-title');
+            levelTitle.innerText = level === 'easy' ? '初級' : level === 'medium' ? '中級' : '上級';
+            document.querySelector('.level-container').classList.add('hidden');
+            document.getElementById('game-container').classList.remove('hidden');
+
+            const levelPairs = kanjiPairs[level];
+            const randomPair = levelPairs[Math.floor(Math.random() * levelPairs.length)];
+            correctAnswer = randomPair[1];
+            const shuffledKanjis = shuffleArray([...randomPair, ...getRandomKanjis(20, levelPairs)]);
+
+            shuffledKanjis.forEach((kanji, index) => {
+                const button = document.createElement('button');
+                button.className = 'kanji-button';
+                button.innerText = (index === 0) ? randomPair[0] : kanji; // 1番目を固定
+                button.onclick = () => selectKanji(button);
+                kanjiGrid.appendChild(button);
+            });
+
+            // 2番目の漢字をランダムな位置に配置
+            const randomIndex = Math.floor(Math.random() * shuffledKanjis.length);
+            kanjiGrid.children[randomIndex].innerText = correctAnswer;
+        }
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function getRandomKanjis(count, excludePairs) {
+            const allKanjis = '一二三四五六七八九十日月火水木金土目田力男女子大小上下左右中正行立言士土午牛木本止喬堯橋檄線綫騅馬堯喬橋檄線綫騅馬雨雪青清湖海藤藤難難'.split('');
+            const excludeKanjis = excludePairs.flat();
+            const filteredKanjis = allKanjis.filter(kanji => !excludeKanjis.includes(kanji));
+            const randomKanjis = [];
+            for (let i = 0; i < count; i++) {
+                randomKanjis.push(filteredKanjis[Math.floor(Math.random() * filteredKanjis.length)]);
+            }
+            return randomKanjis;
+        }
+
+        function selectKanji(button) {
+            const buttons = document.querySelectorAll('.kanji-button');
+            buttons.forEach(btn => btn.classList.remove('selected'));
+            button.classList.add('selected');
+        }
+
+        function checkAnswer() {
+            const selectedButton = document.querySelector('.kanji-button.selected');
+            if (selectedButton && selectedButton.innerText === correctAnswer) {
+                alert('正解です！');
+            } else {
+                alert('不正解です。もう一度試してください。');
+            }
+        }
+    </script>
+</body>
+</html>
