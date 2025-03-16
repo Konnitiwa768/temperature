@@ -97,23 +97,23 @@
                             [r, g, b, a] = colors.extremehot; // 赤道付近を「暑い」色に
                         } else {
                             const angle = Math.atan2(y - 150, x - 90) + time / 60; // ぐにゃぐにゃ効果
-                            const radius = distanceToCenter + Math.sin(angle * 10) * 6 + Math.random() * 11;
+                            const radius = distanceToCenter + Math.sin(angle * 10) * 7 + Math.random() * 20;
                             const pixelValue = Math.floor((radius / 150) * 255);
                             if (pixelValue < 32) {
                                 [r, g, b, a] = colors.supercold;
-                            } else if (pixelValue < 64) {
+                            } else if (pixelValue < 40) {
                                 [r, g, b, a] = colors.cold;
-                            } else if (pixelValue < 96) {
+                            } else if (pixelValue < 90) {
                                 [r, g, b, a] = colors.coldmild;
-                            } else if (pixelValue < 128) {
+                            } else if (pixelValue < 120) {
                                 [r, g, b, a] = colors.mild;
                             } else if (pixelValue < 160) {
                                 [r, g, b, a] = colors.mildwarm;
-                            } else if (pixelValue < 192) {
+                            } else if (pixelValue < 198) {
                                 [r, g, b, a] = colors.warm;
-                            } else if (pixelValue < 224) {
+                            } else if (pixelValue < 228) {
                                 [r, g, b, a] = colors.hot;
-                            } else if (pixelValue < 240) {
+                            } else if (pixelValue < 250) {
                                 [r, g, b, a] = colors.veryhot;
                             } else if (pixelValue < 255) {
                                 [r, g, b, a] = colors.extremeveryhot;
